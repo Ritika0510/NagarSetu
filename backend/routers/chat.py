@@ -1,0 +1,117 @@
+"""
+NagarSetu — POST /api/chat router per AGENTS.md §7.
+
+Flow: validate → retrieve (hybrid RRF) → prompt → LLM (fallback chain)
+→ verify groundedness → Pydantic-validate §6.2 → respond.
+On LLM failure: 503 + Demo Mode cached response with X-Demo-Mode: true.
+"""
+
+import json
+import logging
+from pathlib import Path
+from backend.rag.scope import evaluate_scope
+
+from fastapi import APIRouter, HTTPException, Request
+
+from backend.llm.client import generate
+from backend.llm.prompts import build_system_prompt, build_user_prompt
+from backend.models.schemas import (
+    ChatRequest,
+    ChatResponse,
+    Checklist,
+    SourceRef,
+)
+from backend.rag.retrieve import retrieve
+from backend.rag.verify import verify
+
+log = logging.getLogger("nagarsetu.chat")
+
+router = APIRouter()
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+DEMO_DIR = REPO_ROOT / "frontend" / "public" / "demo"
+
+
+def _demo_response(procedure_id: str) -> dict:
+    """Load a cached demo checklist per §11. Raises 503 if none exists."""
+    demo_path = DEMO_DIR / f"{procedure_id}.json"
+    if not demo_path.exists():
+        raise HTTPException(
+            status_code=503,
+            detail="LLM unavailable and no demo cache for this procedure.",
+        )
+    return json.loads(demo_path.read_text(encoding="utf-8"))
+
+
+def _detect_procedure(message: str) -> str | None:
+    """Cheap keyword routing to a procedure_id for retrieval filtering."""
+    m = message.lower()
+    if "shop" in m or "trade" in m or "license" in m or "licence" in m:
+        return "chandigarh_trade_license"
+    if "water" in m:
+        return "water_connection"
+    if "property tax" in m or "house tax" in m:
+        return "property_tax"
+    return None
+
+
+@router.post("/api/chat", response_model=None)
+def chat(req: ChatRequest, request: Request):
+    # 1. Retrieve (hybrid per §8.4)
+    procedure_id = _detect_procedure(req.message)
+    try:
+        chunks = retrieve(req.message, procedure_id=procedure_id, k=8)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+    # 1.5 Scope gate (Task 2): refuse out-of-scope queries BEFORE
+    # generation. Supersedes the old 503-on-empty-chunks behavior —
+    # refusals are 200 OK with a structured body, never errors.
+    scope_result = evaluate_scope(req.message, procedure_id, chunks)
+    if scope_result:
+        return scope_result
+
+    # 2. Generate (Groq → Gemini → demo per §9.4)
+    valid_ids = list(dict.fromkeys(c.procedure_id for c in chunks))  # order-preserving unique
+    system = build_system_prompt(req.language, valid_procedure_ids=valid_ids)
+    user_prompt = build_user_prompt(req.message, chunks)
+    try:
+        checklist_dict = generate(user_prompt, system)
+    except RuntimeError as e:
+        # All providers failed → Demo Mode per §7 / §11
+        demo_pid = procedure_id or "chandigarh_trade_license"
+        checklist_dict = _demo_response(demo_pid)
+        request.headers.__dict__.setdefault("_demo", True)  # see note below
+
+    # 3. Verify groundedness (§8.5)
+    checklist_dict = verify(checklist_dict, chunks)
+
+    # 4. Strict §6.2 validation — reject malformed LLM output
+    try:
+        checklist = Checklist.model_validate(checklist_dict)
+    except Exception as e:
+        log.error("LLM output failed §6.2 validation: %s", e)
+        raise HTTPException(
+            status_code=503,
+            detail="LLM returned an invalid checklist. Retry or use Demo Mode.",
+        )
+
+    # 5. Assemble response per §7
+    sources = [
+        SourceRef(
+            chunk_id=c.chunk_id,
+            source_url=c.source_url,
+            snippet=c.text[:200],
+        )
+        for c in chunks
+    ]
+    low_confidence = checklist.confidence < 0.6
+
+    return ChatResponse(
+        assistant_message=(
+            f"Here's the complete process for {checklist.procedure_name.lower()}."
+        ),
+        checklist=checklist,
+        sources=sources,
+        low_confidence=low_confidence,
+    )

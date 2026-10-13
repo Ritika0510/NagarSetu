@@ -1,0 +1,2 @@
+MOCK PLACEHOLDER — fetch of https://punjab.gov.in/water-supply failed at ingest time.
+Contents below are synthesized fixtures flagged with source_url=MOCK.

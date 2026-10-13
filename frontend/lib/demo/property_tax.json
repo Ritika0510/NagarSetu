@@ -1,0 +1,79 @@
+{
+  "procedure_name": "Property Tax Payment — Chandigarh Municipal Corporation",
+  "procedure_id": "property_tax",
+  "summary": "Property tax can be paid online through the MCC portal using your property ID. The process involves locating your property record, verifying the computed tax, and paying online with instant receipt generation.",
+  "estimated_total_time": "15–30 minutes",
+  "estimated_total_cost": "Varies by property — computed by the portal",
+  "confidence": 0.9,
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Register or log in on the MCC e-Sewa portal",
+      "description": "Create an account on the Municipal Corporation Chandigarh online services portal using a valid mobile number and email address. Registration is free and immediate.",
+      "documents_needed": ["Mobile number", "Email address"],
+      "fee": "₹0",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_01"],
+      "verified": true
+    },
+    {
+      "step_number": 2,
+      "title": "Locate your property record",
+      "description": "Use your property ID or owner name to search for your property record on the portal. Prepare proof of identity and ownership documents in case verification is needed.",
+      "documents_needed": ["Property ID", "Proof of identity (Aadhaar/PAN)", "Ownership documents"],
+      "fee": "₹0",
+      "processing_time": "5 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_02"],
+      "verified": true
+    },
+    {
+      "step_number": 3,
+      "title": "Fill the online property tax form",
+      "description": "Log in to the portal, select the Property Tax service, and complete the form with property details, applicant details, and the assessment year.",
+      "documents_needed": [],
+      "fee": "₹0",
+      "processing_time": "10–15 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_03"],
+      "verified": true
+    },
+    {
+      "step_number": 4,
+      "title": "Upload supporting documents",
+      "description": "Upload scanned copies of required documents in PDF or JPG format, each under 2 MB, as listed on the application form.",
+      "documents_needed": ["Scanned identity proof", "Scanned ownership documents"],
+      "fee": "₹0",
+      "processing_time": "10 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_04"],
+      "verified": true
+    },
+    {
+      "step_number": 5,
+      "title": "Pay the computed tax online",
+      "description": "Review the computed tax amount and pay via net banking, UPI, debit or credit card. Rebates may apply for early payment; the portal shows the final amount before payment.",
+      "documents_needed": [],
+      "fee": "Varies by property",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_05"],
+      "verified": true
+    },
+    {
+      "step_number": 6,
+      "title": "Download the payment receipt",
+      "description": "After payment, the receipt is generated instantly and can be downloaded from the portal. Keep it for your records. Use the reference number to track status if needed.",
+      "documents_needed": [],
+      "fee": "₹0",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["property_tax__step_06"],
+      "verified": true
+    }
+  ],
+  "warnings": [
+    "Pay before the due date to avoid late fees. Early-payment rebates may be available."
+  ]
+}
