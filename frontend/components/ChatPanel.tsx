@@ -1,59 +1,299 @@
+// "use client";
+
+// import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+// import { ArrowRight, Send } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { DEMO_MODE, sendChat } from "@/lib/api";
+// import type { ChatResponse, Language, Message } from "@/lib/types";
+// import { cn } from "@/lib/utils";
+// import { MessageBubble } from "./MessageBubble";
+// import { OfflineCard } from "./OfflineCard";
+// import { OutOfScopeCard } from "./OutOfScopeCard";
+
+// interface ChatPanelProps {
+//   sessionId: string;
+//   language: Language;
+//   onChecklistUpdate: (response: ChatResponse) => void;
+// }
+
+// const EXAMPLE_CHIPS: Array<{ label: string; message: string }> = [
+//   { label: "Open a small shop", message: "I want to open a small shop in Chandigarh" },
+//   { label: "Get a water connection", message: "I need a new water connection for my house" },
+//   { label: "Pay property tax", message: "How do I pay my property tax in Chandigarh?" },
+// ];
+
+// function BridgeMark({ className }: { className?: string }) {
+//   return (
+//     <svg viewBox="0 0 72 72" aria-hidden="true" className={className}>
+//       <path
+//         d="M10 28.5c0-7.5 6-13.5 13.5-13.5H31a7.5 7.5 0 0 1 7.5 7.5v7.5c0 5.8-4.7 10.5-10.5 10.5H19c-2 0-3.5 1.5-3.5 3.5V54h-5.5V28.5Zm14.5 17.5h9.5c4.8 0 8.6-3.8 8.6-8.5v-8.2A8.6 8.6 0 0 0 33.5 20h-7.3c-4.1 0-7.4 3.3-7.4 7.4v3.1h7.2c1.7 0 3 1.3 3 3v10.5Z"
+//         fill="currentColor"
+//       />
+//       <path d="M42 21h18v5H42zm0 11h18v5H42zm0 11h18v5H42z" fill="currentColor" opacity="0.9"/>
+//     </svg>
+//   );
+// }
+
+// export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelProps) {
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [input, setInput] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const bottomRef = useRef<HTMLDivElement>(null);
+
+//   const DISCLAIMER = "Navigational aid. Verify with the official department.";
+
+//   useEffect(() => {
+//     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [messages, loading]);
+
+//   const handleSubmit = useCallback(
+//     async (event?: FormEvent, presetMessage?: string) => {
+//       event?.preventDefault();
+//       const text = (presetMessage ?? input).trim();
+//       if (!text || loading) return;
+
+//       const userMsg: Message = {
+//         id: `u-${Date.now()}`,
+//         role: "user",
+//         text,
+//       };
+//       setMessages((previous) => [...previous, userMsg]);
+//       setInput("");
+//       setError(null);
+//       setLoading(true);
+
+//       try {
+//         const response = await sendChat({
+//           session_id: sessionId,
+//           message: text,
+//           language,
+//         });
+
+//         if ("refusal" in response && response.refusal === true) {
+//           const refusalMsg: Message = {
+//             id: `r-${Date.now()}`,
+//             role: "assistant",
+//             text: response.message ?? "That request is outside what I can help with.",
+//             refusal: {
+//               message: response.message ?? "",
+//               suggestions: response.suggestions ?? [],
+//             },
+//           };
+//           setMessages((previous) => [...previous, refusalMsg]);
+//           return;
+//         }
+
+//         if ("error" in response && response.error === true) {
+//           const offlineMsg: Message = {
+//             id: `o-${Date.now()}`,
+//             role: "assistant",
+//             text: response.message,
+//             offline: {
+//               message: response.message,
+//               suggestions: response.suggestions ?? [],
+//             },
+//           };
+//           setMessages((previous) => [...previous, offlineMsg]);
+//           return;
+//         }
+
+//         if (!("assistant_message" in response)) {
+//           setError("Unexpected response shape from the server.");
+//           return;
+//         }
+
+//         const assistantMsg: Message = {
+//           id: `a-${Date.now()}`,
+//           role: "assistant",
+//           text: response.assistant_message,
+//           checklist: response.checklist,
+//           sources: response.sources,
+//           lowConfidence: response.low_confidence,
+//           demoMode: response.demo_mode ?? DEMO_MODE,
+//           cachedOffline: "_offline_fallback" in response && response._offline_fallback === true,
+//         };
+//         setMessages((previous) => [...previous, assistantMsg]);
+//         onChecklistUpdate(response);
+//       } catch (caughtError) {
+//         const detail = caughtError instanceof Error ? caughtError.message : "Something went wrong.";
+//         setError(detail);
+//         setMessages((previous) => [
+//           ...previous,
+//           {
+//             id: `e-${Date.now()}`,
+//             role: "assistant",
+//             text: "Sorry, I couldn't process that request. Please try again.",
+//           },
+//         ]);
+//       } finally {
+//         setLoading(false);
+//       }
+//     },
+//     [input, loading, language, onChecklistUpdate, sessionId]
+//   );
+
+//   return (
+//     <div className="flex h-full flex-col bg-white">
+//       <div className="flex-1 space-y-4 overflow-y-auto p-4">
+//         {messages.length === 0 && (
+//           <div className="mt-8 flex h-full flex-col items-center justify-center text-center">
+//             <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-100/80 text-brand-700/20">
+//               <BridgeMark className="h-16 w-16" />
+//             </div>
+//             <h2 className="text-[22px] font-bold text-slate-900">
+//               Where do you want to start?
+//             </h2>
+//             <p className="mt-3 max-w-md text-base leading-7 text-slate-600">
+//               Type a government procedure.
+//               We&apos;ll build the checklist.
+//             </p>
+//             <div className="mt-6 flex flex-wrap justify-center gap-3">
+//               {EXAMPLE_CHIPS.map((chip) => (
+//                 <button
+//                   key={chip.label}
+//                   type="button"
+//                   onClick={() => handleSubmit(undefined, chip.message)}
+//                   className="rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-900 transition-all duration-150 ease-out hover:border-brand-700 hover:bg-brand-50"
+//                 >
+//                   {chip.label}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+
+//         {messages.map((message) =>
+//           message.refusal ? (
+//             <OutOfScopeCard
+//               key={message.id}
+//               message={message.refusal.message}
+//               suggestions={message.refusal.suggestions}
+//               onSuggestionClick={(suggestion) => {
+//                 setInput(suggestion);
+//                 handleSubmit(undefined, suggestion);
+//               }}
+//             />
+//           ) : message.offline ? (
+//             <OfflineCard
+//               key={message.id}
+//               message={message.offline.message}
+//               suggestions={message.offline.suggestions}
+//               onSuggestionClick={(suggestion) => {
+//                 setInput(suggestion);
+//                 handleSubmit(undefined, suggestion);
+//               }}
+//             />
+//           ) : (
+//             <MessageBubble key={message.id} message={message} />
+//           )
+//         )}
+
+//         {loading && (
+//           <div className="flex justify-start">
+//             <div className="max-w-[80%] rounded-[16px_16px_16px_4px] border border-slate-200 bg-white px-4 py-3 shadow-sm">
+//               <div className="flex items-center gap-2 pt-1">
+//                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+//                   <BridgeMark className="h-4 w-4" />
+//                 </div>
+//                 <div className="flex items-center gap-2">
+//                   {[0, 1, 2].map((index) => (
+//                     <span
+//                       key={index}
+//                       className={cn(
+//                         "block h-2.5 w-2.5 rounded-full bg-slate-400 animate-pulse-slow",
+//                         index === 1 && "animation-delay-150",
+//                         index === 2 && "animation-delay-300"
+//                       )}
+//                       style={{ animationDelay: `${index * 200}ms` }}
+//                     />
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         )}
+
+//         <div ref={bottomRef} />
+//       </div>
+
+//       {error && (
+//         <div className="mx-4 mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+//           {error}
+//         </div>
+//       )}
+
+//       <form onSubmit={handleSubmit} className={cn("border-t border-slate-100 bg-white p-4")}>
+//         <div className="flex gap-2">
+//           <Input
+//             value={input}
+//             onChange={(event) => setInput(event.target.value)}
+//             placeholder="Describe what you need to do…"
+//             disabled={loading}
+//             aria-label="Describe what you need to do"
+//             className="h-11 rounded-lg border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:ring-brand-700"
+//           />
+//           <Button
+//             type="submit"
+//             disabled={loading || !input.trim()}
+//             size="icon"
+//             className="h-11 w-11 rounded-lg bg-brand-700 text-white hover:bg-brand-900"
+//             aria-label="Send chat message"
+//           >
+//             <Send className="h-4 w-4" />
+//           </Button>
+//         </div>
+//         <div className="mt-2 flex items-center justify-center gap-2 text-[11px] text-slate-500">
+//           <span>{DISCLAIMER}</span>
+//           <ArrowRight className="h-3 w-3" />
+//         </div>
+//       </form>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { DEMO_MODE, getSessionId, sendChat } from "@/lib/api";
+import { ArrowRight } from "lucide-react";
+import { DEMO_MODE, sendChat } from "@/lib/api";
 import type { ChatResponse, Language, Message } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { PromptInput } from "@/components/ui/ai-chat-input";
 import { MessageBubble } from "./MessageBubble";
 import { OfflineCard } from "./OfflineCard";
+import { OutOfScopeCard } from "./OutOfScopeCard";
 
 interface ChatPanelProps {
-  /** per §10.2 */
   sessionId: string;
   language: Language;
   onChecklistUpdate: (response: ChatResponse) => void;
 }
 
-interface OutOfScopeCardProps {
-  message: string;
-  suggestions: string[];
-  onSuggestionClick: (suggestion: string) => void;
-}
+const DISCLAIMER = "Navigational aid. Verify with the official department.";
 
-function OutOfScopeCard({
-  message,
-  suggestions,
-  onSuggestionClick,
-}: OutOfScopeCardProps) {
-  return (
-    <div className="rounded-xl border bg-card p-4 text-sm">
-      <p className="text-foreground">{message}</p>
-      {suggestions.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {suggestions.map((suggestion) => (
-            <button
-              key={suggestion}
-              type="button"
-              onClick={() => onSuggestionClick(suggestion)}
-              className="rounded-full border px-3 py-1.5 text-left text-xs text-foreground transition-colors hover:border-primary hover:text-primary"
-            >
-              {suggestion}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const EXAMPLE_CHIPS: { label: string; message: string }[] = [
+const EXAMPLE_CHIPS: Array<{ label: string; message: string }> = [
   { label: "Open a small shop", message: "I want to open a small shop in Chandigarh" },
-  { label: "Get a new water connection", message: "I need a new water connection for my house" },
+  { label: "Get a water connection", message: "I need a new water connection for my house" },
   { label: "Pay property tax", message: "How do I pay my property tax in Chandigarh?" },
 ];
+
+// Staggered start for the three typing dots (1.4s cycle is set by animate-dot).
+const DOT_DELAYS: string[] = ["", "[animation-delay:200ms]", "[animation-delay:400ms]"];
+
+function BridgeMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 72 72" aria-hidden="true" className={className}>
+      <path
+        d="M10 28.5c0-7.5 6-13.5 13.5-13.5H31a7.5 7.5 0 0 1 7.5 7.5v7.5c0 5.8-4.7 10.5-10.5 10.5H19c-2 0-3.5 1.5-3.5 3.5V54h-5.5V28.5Zm14.5 17.5h9.5c4.8 0 8.6-3.8 8.6-8.5v-8.2A8.6 8.6 0 0 0 33.5 20h-7.3c-4.1 0-7.4 3.3-7.4 7.4v3.1h7.2c1.7 0 3 1.3 3 3v10.5Z"
+        fill="currentColor"
+      />
+      <path d="M42 21h18v5H42zm0 11h18v5H42zm0 11h18v5H42z" fill="currentColor" opacity="0.9" />
+    </svg>
+  );
+}
 
 export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -62,16 +302,13 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // §14.2 disclaimer — always visible
-  const DISCLAIMER = "Navigational aid. Verify with the official department.";
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   const handleSubmit = useCallback(
-    async (e?: FormEvent, presetMessage?: string) => {
-      e?.preventDefault();
+    async (event?: FormEvent, presetMessage?: string) => {
+      event?.preventDefault();
       const text = (presetMessage ?? input).trim();
       if (!text || loading) return;
 
@@ -80,7 +317,7 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
         role: "user",
         text,
       };
-      setMessages((prev) => [...prev, userMsg]);
+      setMessages((previous) => [...previous, userMsg]);
       setInput("");
       setError(null);
       setLoading(true);
@@ -92,8 +329,7 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
           language,
         });
 
-        // Task 2: refusal path — render OutOfScopeCard, no checklist
-        if (response.refusal === true) {
+        if ("refusal" in response && response.refusal === true) {
           const refusalMsg: Message = {
             id: `r-${Date.now()}`,
             role: "assistant",
@@ -103,11 +339,10 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
               suggestions: response.suggestions ?? [],
             },
           };
-          setMessages((prev) => [...prev, refusalMsg]);
-          return; // no checklist update, no error
+          setMessages((previous) => [...previous, refusalMsg]);
+          return;
         }
 
-                // Task 4: structured offline error — returned, not thrown.
         if ("error" in response && response.error === true) {
           const offlineMsg: Message = {
             id: `o-${Date.now()}`,
@@ -118,7 +353,12 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
               suggestions: response.suggestions ?? [],
             },
           };
-          setMessages((prev) => [...prev, offlineMsg]);
+          setMessages((previous) => [...previous, offlineMsg]);
+          return;
+        }
+
+        if (!("assistant_message" in response)) {
+          setError("Unexpected response shape from the server.");
           return;
         }
 
@@ -132,13 +372,13 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
           demoMode: response.demo_mode ?? DEMO_MODE,
           cachedOffline: "_offline_fallback" in response && response._offline_fallback === true,
         };
-        setMessages((prev) => [...prev, assistantMsg]);
-        onChecklistUpdate(response); // §10.2: parent renders the checklist
-      } catch (err) {
-        const detail = err instanceof Error ? err.message : "Something went wrong.";
+        setMessages((previous) => [...previous, assistantMsg]);
+        onChecklistUpdate(response);
+      } catch (caughtError) {
+        const detail = caughtError instanceof Error ? caughtError.message : "Something went wrong.";
         setError(detail);
-        setMessages((prev) => [
-          ...prev,
+        setMessages((previous) => [
+          ...previous,
           {
             id: `e-${Date.now()}`,
             role: "assistant",
@@ -149,69 +389,93 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
         setLoading(false);
       }
     },
-    [input, loading, sessionId, language, onChecklistUpdate]
+    [input, loading, language, onChecklistUpdate, sessionId]
   );
 
   return (
-    <div className="flex h-full flex-col">
-      {/* Messages */}
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+    <div className="flex h-full flex-col bg-white">
+      <div
+        role="log"
+        aria-live="polite"
+        aria-label="Conversation"
+        className="flex-1 space-y-4 overflow-y-auto p-4"
+      >
         {messages.length === 0 && (
-          <div className="mt-8 text-center">
-            <h2 className="text-xl font-semibold text-foreground">
-              Describe what you need to do
+          <div className="flex min-h-full flex-col items-center justify-center py-8 text-center">
+            <BridgeMark className="h-20 w-20 text-brand-700/20" />
+            <h2 className="mt-6 text-[22px] font-bold text-slate-900">
+              Where do you want to start?
             </h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-              For example, &ldquo;I want to open a small shop in
-              Chandigarh&rdquo; — and I&apos;ll build your step-by-step
-              checklist.
+            <p className="mt-3 max-w-md text-base leading-[1.6] text-slate-600">
+              Type a government procedure.
+              <br />
+              We&apos;ll build the checklist.
             </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-2">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               {EXAMPLE_CHIPS.map((chip) => (
                 <button
                   key={chip.label}
                   type="button"
-                  onClick={() => handleSubmit(undefined, chip.message)}
-                  className="rounded-full border bg-card px-4 py-1.5 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+                  onClick={() => void handleSubmit(undefined, chip.message)}
+                  className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm text-slate-900 transition-colors duration-150 ease-out hover:border-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                 >
                   {chip.label}
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 text-slate-500" />
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {messages.map((m) =>
-          m.refusal ? (
-            <OutOfScopeCard
-              key={m.id}
-              message={m.refusal.message}
-              suggestions={m.refusal.suggestions}
-              onSuggestionClick={(s) => {
-                setInput(s);
-                handleSubmit(undefined, s);
-              }}
-            />
-          ) : m.offline ? (
-            <OfflineCard
-              key={m.id}
-              message={m.offline.message}
-              suggestions={m.offline.suggestions}
-              onSuggestionClick={(s) => {
-                setInput(s);
-                handleSubmit(undefined, s);
-              }}
-            />
+        {messages.map((message) =>
+          message.refusal ? (
+            <div key={message.id} className="animate-enter">
+              <OutOfScopeCard
+                message={message.refusal.message}
+                suggestions={message.refusal.suggestions}
+                onSuggestionClick={(suggestion) => {
+                  void handleSubmit(undefined, suggestion);
+                }}
+              />
+            </div>
+          ) : message.offline ? (
+            <div key={message.id} className="animate-enter">
+              <OfflineCard
+                message={message.offline.message}
+                suggestions={message.offline.suggestions}
+                onSuggestionClick={(suggestion) => {
+                  void handleSubmit(undefined, suggestion);
+                }}
+              />
+            </div>
           ) : (
-            <MessageBubble key={m.id} message={m} />
+            <div key={message.id} className="animate-enter">
+              <MessageBubble message={message} />
+            </div>
           )
         )}
 
         {loading && (
-          <div className="flex justify-start">
-            <div className="flex items-center gap-2 rounded-xl border bg-card px-4 py-3 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Building your checklist…
+          <div
+            role="status"
+            aria-label="NagarSetu is typing"
+            className="flex animate-enter justify-start"
+          >
+            <div className="flex items-center gap-3 rounded-[16px_16px_16px_4px] border border-slate-200 bg-white px-4 py-3">
+              <span
+                aria-hidden="true"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"
+              >
+                <BridgeMark className="h-3.5 w-3.5" />
+              </span>
+              <span aria-hidden="true" className="flex items-center gap-1.5">
+                {DOT_DELAYS.map((delay, index) => (
+                  <span
+                    key={index}
+                    className={cn("block h-1.5 w-1.5 animate-dot rounded-full bg-slate-400", delay)}
+                  />
+                ))}
+              </span>
             </div>
           </div>
         )}
@@ -219,34 +483,20 @@ export function ChatPanel({ sessionId, language, onChecklistUpdate }: ChatPanelP
         <div ref={bottomRef} />
       </div>
 
-      {/* Error banner */}
       {error && (
-        <div className="mx-4 mb-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        <div role="alert" className="mx-4 mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
           {error}
         </div>
       )}
 
-      {/* Input */}
-      <form
-        onSubmit={handleSubmit}
-        className={cn("border-t bg-card p-4")}
-      >
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Describe what you need to do…"
-            disabled={loading}
-            aria-label="Describe what you need to do"
-          />
-          <Button type="submit" disabled={loading || !input.trim()} size="icon">
-            <Send className="h-4 w-4" />
-            <span className="sr-only">Send</span>
-          </Button>
-        </div>
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          {DISCLAIMER}
-        </p>
+      <form onSubmit={handleSubmit} className="border-t border-slate-100 bg-white p-4">
+        <PromptInput
+          value={input}
+          onChange={setInput}
+          placeholder="Describe what you need to do..."
+          disabled={loading}
+        />
+        <p className="mt-2 text-center text-[11px] text-slate-500">{DISCLAIMER}</p>
       </form>
     </div>
   );

@@ -1,7 +1,4 @@
-"""
-NagarSetu — FastAPI application entrypoint.
-Routers: /api/health, /api/chat, /api/progress.
-"""
+"""NagarSetu — FastAPI application entrypoint."""
 
 import logging
 import os
@@ -53,9 +50,11 @@ def health() -> dict:
     return {"ok": True}
 
 
-# Routers — imported AFTER sys.path fix (§7: chat, progress)
+# Routers — imported AFTER sys.path fix.
+from backend.routers.auth import router as auth_router  # noqa: E402
 from backend.routers.chat import router as chat_router  # noqa: E402
 from backend.routers.progress import router as progress_router  # noqa: E402
 
+app.include_router(auth_router)
 app.include_router(chat_router)
 app.include_router(progress_router)

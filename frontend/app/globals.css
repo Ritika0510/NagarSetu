@@ -9,6 +9,52 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+  }
+
+  .demo-gallery-scrollbar {
+    scrollbar-color: #1d4ed8 #e2e8f0;
+    scrollbar-width: auto;
+  }
+
+  .demo-gallery-scrollbar::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .demo-gallery-scrollbar::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 9999px;
+  }
+
+  .demo-gallery-scrollbar::-webkit-scrollbar-thumb {
+    background: #1d4ed8;
+    border: 2px solid #e2e8f0;
+    border-radius: 9999px;
+  }
+
+  .civic-map-punjab {
+    left: 32%;
+    top: 68%;
+  }
+
+  .civic-map-zoom {
+    transform-origin: 50% 0;
+  }
+
+  .civic-map-haryana {
+    left: 33%;
+    top: 74%;
+  }
+
+  @media (max-width: 640px) {
+    .civic-map-punjab {
+      left: 27%;
+      top: 31%;
+    }
+
+    .civic-map-haryana {
+      left: 29%;
+      top: 35%;
+    }
   }
 }

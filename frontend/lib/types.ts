@@ -46,10 +46,12 @@ export interface ChatResponse {
 }
 
 // §7 — POST /api/chat request
+export type Language = "en" | "hi";
+
 export interface ChatRequest {
   session_id: string;
   message: string;
-  language: "en" | "hi";
+  language: Language;
 }
 
 // §7 — progress

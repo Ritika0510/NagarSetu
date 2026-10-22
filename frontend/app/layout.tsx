@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { CivicMapBackground } from "@/components/site/CivicMapBackground";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,8 +16,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        {children}
+      <body className={`${inter.className} bg-[#e9f9fc] text-foreground antialiased`}>
+        <CivicMapBackground />
+        <div className="relative z-10 min-h-screen">{children}</div>
       </body>
     </html>
   );

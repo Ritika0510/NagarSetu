@@ -28,6 +28,8 @@ import type {
   ChatResult,
   Checklist,
   OfflineChatResult,
+  ProgressResponse,
+  ProgressUpdate,
   SourceRef,
 } from "./types";
 
