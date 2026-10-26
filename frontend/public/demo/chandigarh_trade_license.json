@@ -1,0 +1,90 @@
+{
+  "procedure_name": "Trade License — Chandigarh Municipal Corporation",
+  "procedure_id": "chandigarh_trade_license",
+  "summary": "A trade license is required for any commercial establishment in Chandigarh. The process takes 7–15 working days and involves online registration, document preparation, application submission, and certificate issuance.",
+  "estimated_total_time": "7–15 working days",
+  "estimated_total_cost": "₹500 – ₹5,000 (varies by establishment type)",
+  "confidence": 0.92,
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Register on the e-Sewa portal",
+      "description": "Create an account on the Municipal Corporation Chandigarh online services portal using a valid mobile number and email address. Registration is free and immediate.",
+      "documents_needed": ["Mobile number", "Email address"],
+      "fee": "₹0",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_01"],
+      "verified": true
+    },
+    {
+      "step_number": 2,
+      "title": "Prepare identity and ownership documents",
+      "description": "Collect proof of identity (Aadhaar/PAN), proof of address, and ownership or rent agreement documents for the premises.",
+      "documents_needed": ["Proof of identity (Aadhaar/PAN)", "Proof of address", "Ownership or rent agreement"],
+      "fee": "₹0",
+      "processing_time": "1–2 days to gather",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_02"],
+      "verified": true
+    },
+    {
+      "step_number": 3,
+      "title": "Fill the online application form",
+      "description": "Log in to the portal, select the Trade License service, and complete the application form with premises details, applicant details, and category of request.",
+      "documents_needed": [],
+      "fee": "Varies by category of establishment",
+      "processing_time": "30–60 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_03"],
+      "verified": true
+    },
+    {
+      "step_number": 4,
+      "title": "Upload documents",
+      "description": "Upload scanned copies of all required documents in PDF or JPG format, each under 2 MB, as listed on the application form.",
+      "documents_needed": ["Scanned identity proof", "Scanned address proof", "Scanned ownership/rent agreement"],
+      "fee": "₹0",
+      "processing_time": "15–30 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_04"],
+      "verified": true
+    },
+    {
+      "step_number": 5,
+      "title": "Pay the applicable fee online",
+      "description": "Pay the fee via net banking, UPI, debit or credit card. Fees vary by category of establishment; the portal shows the exact amount before payment.",
+      "documents_needed": [],
+      "fee": "₹500 – ₹5,000",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_05"],
+      "verified": true
+    },
+    {
+      "step_number": 6,
+      "title": "Track application status",
+      "description": "Use the application reference number to track status on the portal. Status updates are also sent by SMS to the registered mobile number.",
+      "documents_needed": ["Application reference number"],
+      "fee": "₹0",
+      "processing_time": "Ongoing",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_06"],
+      "verified": true
+    },
+    {
+      "step_number": 7,
+      "title": "Receive approval certificate",
+      "description": "Once approved, the certificate is issued digitally and can be downloaded from the portal. Physical collection is available if preferred.",
+      "documents_needed": [],
+      "fee": "₹0",
+      "processing_time": "7–15 working days total",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["chandigarh_trade_license__step_07"],
+      "verified": true
+    }
+  ],
+  "warnings": [
+    "Fees are subject to revision. Verify current amounts on the official portal."
+  ]
+}

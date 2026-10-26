@@ -1,0 +1,90 @@
+{
+  "procedure_name": "New Water Connection — Punjab / Chandigarh",
+  "procedure_id": "water_connection",
+  "summary": "A new water connection requires registration on the municipal portal, submission of ownership and identity documents, payment of connection charges, and inspection before activation. Typically 7–20 working days.",
+  "estimated_total_time": "7–20 working days",
+  "estimated_total_cost": "₹1,000 – ₹5,000 (varies by connection size)",
+  "confidence": 0.9,
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Register on the municipal services portal",
+      "description": "Create an account on the Municipal Corporation Chandigarh online services portal using a valid mobile number and email address. Registration is free and immediate.",
+      "documents_needed": ["Mobile number", "Email address"],
+      "fee": "₹0",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_01"],
+      "verified": true
+    },
+    {
+      "step_number": 2,
+      "title": "Prepare identity and ownership documents",
+      "description": "Collect proof of identity (Aadhaar/PAN), proof of address, and ownership documents for the premises requiring the connection.",
+      "documents_needed": ["Proof of identity (Aadhaar/PAN)", "Proof of address", "Property ownership documents"],
+      "fee": "₹0",
+      "processing_time": "1–2 days to gather",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_02"],
+      "verified": true
+    },
+    {
+      "step_number": 3,
+      "title": "Fill the online application form",
+      "description": "Log in to the portal, select the New Water Connection service, and complete the application form with premises details, applicant details, and connection size.",
+      "documents_needed": [],
+      "fee": "₹0",
+      "processing_time": "30–60 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_03"],
+      "verified": true
+    },
+    {
+      "step_number": 4,
+      "title": "Upload documents",
+      "description": "Upload scanned copies of all required documents in PDF or JPG format, each under 2 MB, as listed on the application form.",
+      "documents_needed": ["Scanned identity proof", "Scanned address proof", "Scanned ownership documents"],
+      "fee": "₹0",
+      "processing_time": "15–30 minutes",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_04"],
+      "verified": true
+    },
+    {
+      "step_number": 5,
+      "title": "Pay connection charges online",
+      "description": "Pay the applicable connection charges via net banking, UPI, debit or credit card. Charges vary by connection size; the portal shows the exact amount before payment.",
+      "documents_needed": [],
+      "fee": "₹1,000 – ₹5,000",
+      "processing_time": "Immediate",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_05"],
+      "verified": true
+    },
+    {
+      "step_number": 6,
+      "title": "Schedule and attend site inspection",
+      "description": "The department conducts a site inspection to verify premises details. Use the application reference number to track inspection scheduling on the portal.",
+      "documents_needed": ["Application reference number"],
+      "fee": "₹0",
+      "processing_time": "3–10 working days",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_06"],
+      "verified": true
+    },
+    {
+      "step_number": 7,
+      "title": "Receive connection activation",
+      "description": "Once approved and inspected, the water connection is activated and confirmation is sent by SMS to the registered mobile number.",
+      "documents_needed": [],
+      "fee": "₹0",
+      "processing_time": "7–20 working days total",
+      "official_link": "MOCK",
+      "source_chunk_ids": ["water_connection__step_07"],
+      "verified": true
+    }
+  ],
+  "warnings": [
+    "Connection charges vary by pipe size and locality. Verify the exact amount on the official portal."
+  ]
+}

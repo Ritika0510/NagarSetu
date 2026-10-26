@@ -1,0 +1,2 @@
+MOCK PLACEHOLDER — fetch of https://mcc.chandigarh.gov.in/trade-license failed at ingest time.
+Contents below are synthesized fixtures flagged with source_url=MOCK.

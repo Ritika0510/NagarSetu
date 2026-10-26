@@ -1,0 +1,13 @@
+# NagarSetu runtime dependencies
+fastapi>=0.110
+uvicorn[standard]
+chromadb>=0.5
+sentence-transformers
+rank-bm25
+groq
+google-generativeai
+pydantic>=2
+psycopg[binary]>=3.2
+python-dotenv
+pytest
+httpx
